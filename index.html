@@ -1,0 +1,1009 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>丁屋資訊</title>
+<meta name="theme-color" content="#2d3748">
+<meta name="application-name" content="丁屋資訊">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="丁屋資訊">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" type="image/png" sizes="192x192" href="https://files.catbox.moe/v83eg6.png">
+<link rel="icon" type="image/png" sizes="512x512" href="https://files.catbox.moe/v83eg6.png">
+<link rel="shortcut icon" href="https://files.catbox.moe/v83eg6.png">
+<link rel="apple-touch-icon" href="https://files.catbox.moe/v83eg6.png">
+<link rel="manifest" href='data:application/manifest+json,{"name":"丁巴App","short_name":"丁巴App","start_url":".","display":"standalone","background_color":"#f4f6f8","theme_color":"#2d3748","icons":[{"src":"https://files.catbox.moe/v83eg6.png","sizes":"192x192 512x512","type":"image/png","purpose":"any maskable"}]}'>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+:root{--red:#e31836;--ink:#1e293b}
+*{box-sizing:border-box}
+body{margin:0;background:#f4f6f8;color:#333;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Microsoft JhengHei",sans-serif}
+.app{max-width:480px;min-height:100vh;margin:auto;background:#fff;box-shadow:0 0 15px #0002;padding-bottom:28px}
+header{position:sticky;top:0;z-index:30;padding:14px 16px;background:#2d3748;color:#fff;box-shadow:0 2px 5px #0002}
+header.kmb{background:var(--red)}
+header.love{background:linear-gradient(135deg,#b8860b,#d4af37,#aa771c)}
+header.eva-header{background:#050505!important}
+.head{display:flex;gap:12px;align-items:center}
+.title{font-size:1.1rem;font-weight:700}
+.sub{font-size:.85rem;opacity:.9;margin-top:2px}
+.back{display:none;border:0;background:none;color:#fff;font-size:1.4rem;cursor:pointer}
+.panel{display:none;padding:16px}
+.panel.active{display:block}
+.option,.primary{width:100%;border-radius:8px;padding:12px 14px;font-weight:700;font-size:.95rem;cursor:pointer}
+.option{background:#fff;border:2px solid #e2e8f0;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;color:#000}
+.shortcut-blue{background:#dbeafe;border-color:#1e3a8a}
+.shortcut-yellow{background:#fef3c7;border-color:#92400e}
+.shortcut-emerald{background:#dcfce7;border-color:#166534}
+.shortcut-purple{background:#f3e8ff;border-color:#7e22ce}
+.shortcut-text{min-width:0;flex:1;line-height:1.45}
+.home-eta{display:block;margin-top:3px;font-size:.8rem;font-weight:600;color:#172554;line-height:1.4}
+.shortcut-yellow .home-eta{color:#713f12}
+.shortcut-emerald .home-eta{color:#14532d}
+.shortcut-purple .home-eta{color:#581c87}
+.primary{background:var(--red);border:0;color:#fff;margin-top:10px}
+.btn-gold{background:linear-gradient(135deg,#bf953f,#fcf6ba,#b38728,#fbf5b7,#aa771c)!important;color:#3d2200!important;border:1px solid #ffe87c!important}
+.tag{font-size:.75rem;padding:3px 6px;border-radius:4px;color:#fff;background:var(--red);white-space:nowrap}
+.timeline{position:relative;margin:8px 0 0 24px}
+.timeline:before{content:"";position:absolute;left:-17px;top:15px;bottom:25px;width:3px;background:#e2e8f0}
+.stop{position:relative;border:1.5px solid #e2e8f0;border-radius:10px;margin-bottom:12px;background:#fff;scroll-margin-top:45px}
+.stop.target-selected{border-color:transparent!important;background:linear-gradient(#fff,#fff) padding-box,linear-gradient(135deg,#e31836,#ff6b81,#ff3366,#ffa07a,#e31836) border-box!important;background-size:250% 250%!important;animation:flow 3s ease infinite,pulse 2s ease-in-out infinite alternate!important}
+.stop.target-selected .stop-head{background:linear-gradient(90deg,#fff1f2,#ffe4e6,#fff1f2);background-size:200% 100%;animation:shine 3s ease infinite;color:var(--red);font-weight:800}
+.dot{position:absolute;left:-29px;top:16px;width:12px;height:12px;border:3px solid #718096;border-radius:50%;background:#fff}
+.stop.target-selected .dot{border-color:var(--red);background:var(--red);animation:ping 1.5s infinite}
+
+/* 特急出動模式 */
+.stop.target-selected.is-approaching,
+.custom.is-approaching,
+.custom.eva-card-lock{border-color:transparent!important;background:linear-gradient(#fff,#fff) padding-box,repeating-linear-gradient(135deg,#ff003c 0 14px,#ffeb3b 14px 28px,#ff003c 28px 42px,#ffffff 42px 48px) border-box!important;background-size:200% 200%!important;animation:dispatchBorder .5s linear infinite,dispatchGlow .7s ease-in-out infinite alternate!important}
+.stop.target-selected.is-approaching .stop-head,
+.custom.is-approaching .custom-head,
+.custom.eva-card-lock .custom-head{background:linear-gradient(90deg,#ffe4e6,#fff0f3,#ffe4e6)!important;border-radius:6px;padding:4px 8px;color:#b91c1c!important;font-weight:900!important;animation:headAlert .45s steps(2,end) infinite!important}
+.stop.target-selected.is-approaching .dot{border-color:#ffea00!important;background:#ff003c!important;animation:urgentDotPing .55s infinite!important}
+.custom.is-approaching .badge,
+.custom.eva-card-lock .badge{background:#d60022!important;animation:warningText .55s steps(2,end) infinite}
+
+@keyframes dispatchBorder{0%{background-position:0% 0%}100%{background-position:100% 100%}}
+@keyframes dispatchGlow{0%{box-shadow:0 0 10px #ff003c,0 0 20px #ffb700,inset 0 0 8px #ffe4e6}100%{box-shadow:0 0 26px #ff003c,0 0 45px #ff0000,0 0 60px #ffea00,inset 0 0 16px #ffccd5}}
+@keyframes headAlert{50%{filter:brightness(1.25) saturate(1.4)}}
+@keyframes urgentDotPing{0%{box-shadow:0 0 0 0 #ff003ccc;transform:scale(1.1)}70%{box-shadow:0 0 0 18px rgba(255,0,60,0);transform:scale(1.4)}100%{box-shadow:0 0 0 0 rgba(255,0,60,0);transform:scale(1.1)}}
+@keyframes flow{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@keyframes pulse{to{box-shadow:0 6px 25px #e3183680,0 0 12px #ff336680}}
+@keyframes shine{50%{background-position:100% 50%}}
+@keyframes ping{70%{box-shadow:0 0 0 11px #e3183600;transform:scale(1.25)}}
+
+.stop-head{padding:12px 16px;font-weight:700;display:flex;justify-content:space-between;cursor:pointer;border-radius:9px}
+.detail{display:none;padding:12px;background:#f8fafc;border-top:1px solid #e2e8f0;border-radius:0 0 9px 9px}
+.stop.expanded .detail{display:block}
+.eta{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:10px}
+.eta.target{border:1.5px solid transparent;background:linear-gradient(#fff,#fff) padding-box,linear-gradient(135deg,#e31836,#ff758c,#e31836) border-box;background-size:200% 200%;animation:flow 3s ease infinite}
+.eta-title{display:flex;justify-content:space-between;gap:8px;color:#777;font-size:.85rem;font-weight:700;margin-bottom:6px}
+.badge{background:#374151;color:#fff;padding:7px 10px;border-radius:8px;font-size:.9rem;line-height:1.15;text-align:center;white-space:nowrap}
+.etas{display:flex;gap:8px;justify-content:space-between}
+.pill{flex:1;background:#edf2f7;padding:6px;border-radius:4px;text-align:center}
+.time{font-size:.95rem;font-weight:700}
+.wait{font-size:.75rem;color:#777}
+.route-label{font-size:1rem;font-weight:800;color:var(--ink);margin:2px 2px 7px}
+.custom{background:#f1f5f9;border:2px solid #475569;border-radius:10px;padding:14px;margin-bottom:16px}
+.custom-head{display:flex;justify-content:space-between;gap:10px;margin-bottom:14px}
+.custom-title{font-size:1rem;font-weight:700;color:var(--ink)}
+.custom-pills{display:flex;gap:8px;flex-wrap:wrap}
+.custom-pill{flex:1 1 calc(33.333% - 6px);min-width:90px;background:#e2e8f0;border-radius:6px;padding:10px 4px;text-align:center}
+.custom-time{font-size:1.05rem;font-weight:700}
+.custom-wait{font-size:.78rem;color:#475569;margin-top:4px}
+.meta{text-align:center;color:#777;font-size:.85rem;margin-top:8px}
+#load{position:fixed;inset:0;z-index:80;background:#0009;color:#fff;display:none;flex-direction:column;align-items:center;justify-content:center}
+.spin{width:48px;height:48px;border:5px solid #fff;border-bottom-color:var(--red);border-radius:50%;animation:rot 1s linear infinite;margin-bottom:14px}
+@keyframes rot{to{transform:rotate(360deg)}}
+.love-card{background:linear-gradient(135deg,#fff5f7,#fff);border:2px solid #fecdd3;border-radius:16px;padding:24px 20px;box-shadow:0 10px 25px -5px #f43f9726}
+.love-days-highlight{color:#e11d48;font-weight:900}
+
+/* 到站時間格：高動感警示 */
+.arrival-alert{position:relative;overflow:hidden;background:linear-gradient(120deg,#530008,#de001f,#ff541a,#bd001d)!important;background-size:300% 300%!important;border:2px solid #ffcb3d!important;color:#fff!important;animation:arrivalFlash .65s steps(2,end) infinite,arrivalFlow 1.4s linear infinite!important;box-shadow:0 0 6px #ffce38,0 0 17px #ff003c,0 0 29px #ff003c!important}
+.arrival-alert:after{content:"";position:absolute;inset:-70% -30%;background:linear-gradient(115deg,transparent 43%,#fff9 50%,transparent 57%);animation:scan .8s linear infinite}
+.arrival-alert .time,.arrival-alert .wait{position:relative;z-index:1;color:#fff!important;text-shadow:0 1px 3px #400!important}
+.arrival-alert .time{font-size:1.1rem;animation:digits .45s steps(2,end) infinite}
+.arrival-alert .wait{font-weight:900}
+.arrival-label{display:inline-flex;align-items:center;gap:4px;color:#b00020;font-weight:900;animation:warningText .5s steps(2,end) infinite}
+.arrival-label{background:#fff1;border-radius:4px;padding:1px 4px}
+@keyframes arrivalFlash{50%{filter:brightness(1.55) saturate(1.35)}}
+@keyframes arrivalFlow{to{background-position:100% 50%}}
+@keyframes scan{to{transform:translateX(65%)}}
+@keyframes digits{50%{color:#fff000!important;text-shadow:0 0 7px #ffe600}}
+@keyframes warningText{0%,45%{color:#b00020;text-shadow:none}46%,100%{color:#ffe600;text-shadow:0 0 6px #ff9500}}
+
+#evaOverlay{position:fixed;inset:0;z-index:50;pointer-events:none;display:none;overflow:hidden}
+.eva-border{position:absolute;left:0;width:100%;height:35px;overflow:hidden;background:#050505;border-top:3px solid #d8d8d8;border-bottom:3px solid #777;box-shadow:0 0 10px #ff1a00aa}
+.eva-top{top:0}
+.eva-bottom{bottom:0}
+.eva-track{position:absolute;top:0;height:100%;display:flex;width:max-content}
+.eva-top .eva-track{animation:right 9s linear infinite}
+.eva-bottom .eva-track{animation:left 9s linear infinite}
+.eva-unit{height:29px;display:flex;align-items:center;gap:12px;padding:0 12px;background:repeating-linear-gradient(135deg,#ef0b0b 0 20px,#ef0b0b 20px 29px,#050505 29px 49px,#050505 49px 58px);font-family:"Arial Black","Microsoft JhengHei",sans-serif;color:#ffffff;font-size:15px;font-weight:900;letter-spacing:1px;white-space:nowrap;text-shadow:0 1px 3px #000}
+.eva-unit b{color:#ff7900;font-family:Impact,sans-serif;font-size:21px;text-shadow:0 0 8px #b52d00}
+.eva-white-text{color:#ffffff;font-weight:900;text-shadow:0 0 5px #000, 0 1px 3px #000}
+.eva-target-warn{display:inline-block;color:#ffff00;font-weight:900;letter-spacing:1.5px;text-shadow:0 0 8px #ffea00,0 0 18px #ff9900,0 0 25px #ff4500}
+@keyframes right{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+@keyframes left{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* === 大埔氣象與雨量臨近預報卡片樣式 === */
+.weather-hero{background:linear-gradient(135deg,#eff6ff 0%,#f0fdf4 100%);border:2px solid #bfdbfe;border-radius:14px;padding:12px 14px;box-shadow:0 3px 10px rgba(30,58,138,0.05);margin-bottom:12px}
+.nowcast-card{background:linear-gradient(135deg,#eff6ff 0%,#f0fdf4 100%);border:2px solid #bfdbfe;border-radius:14px;padding:12px 14px;box-shadow:0 3px 10px rgba(30,58,138,0.05);margin-bottom:16px}
+</style>
+</head>
+<body>
+<div id="evaOverlay">
+  <div class="eva-border eva-top">
+    <div class="eva-track">
+      <div class="eva-unit"><span class="eva-white-text">緊急事態非常警報令</span> <b>EMERGENCY</b> · <span class="eva-target-warn">⚠情報確認</span></div>
+      <div class="eva-unit"><span class="eva-white-text">緊急事態非常警報令</span> <b>EMERGENCY</b> · <span class="eva-target-warn">⚠情報確認</span></div>
+      <div class="eva-unit"><span class="eva-white-text">緊急事態非常警報令</span> <b>EMERGENCY</b> · <span class="eva-target-warn">⚠情報確認</span></div>
+    </div>
+  </div>
+  <div class="eva-border eva-bottom">
+    <div class="eva-track">
+      <div class="eva-unit"><span class="eva-target-warn">⚠情報確認</span> · <b>EMERGENCY</b> <span class="eva-white-text">緊急事態非常警報令</span></div>
+      <div class="eva-unit"><span class="eva-target-warn">⚠情報確認</span> · <b>EMERGENCY</b> <span class="eva-white-text">緊急事態非常警報令</span></div>
+      <div class="eva-unit"><span class="eva-target-warn">⚠情報確認</span> · <b>EMERGENCY</b> <span class="eva-white-text">緊急事態非常警報令</span></div>
+    </div>
+  </div>
+</div>
+<main class="app">
+  <header id="header">
+    <div class="head">
+      <button id="back" class="back" onclick="goBack()">←</button>
+      <div>
+        <div id="headMain" class="title">即時到站查詢</div>
+        <div id="headSub" class="sub" style="display:none"></div>
+      </div>
+    </div>
+  </header>
+
+  <section id="step2" class="panel active">
+    <!-- 頂部：大埔即時氣象儀表板 -->
+    <div class="weather-hero">
+      <div class="flex items-center justify-between pb-2 border-b border-blue-200">
+        <div class="flex items-center gap-2">
+          <span class="text-sm font-bold text-slate-800">🌤️ 大埔即時氣象</span>
+          <span id="wxWarnBadge" class="hidden text-xs bg-amber-500 text-white font-bold px-2 py-0.5 rounded-full animate-pulse"></span>
+        </div>
+        <span id="wxUpdateTime" class="text-xs text-slate-500">更新中...</span>
+      </div>
+
+      <!-- 氣溫與天況 -->
+      <div class="flex items-center justify-between my-2.5">
+        <div class="flex items-baseline gap-1">
+          <span id="tpTemp" class="text-4xl font-extrabold text-blue-700">--°C</span>
+          <span class="text-xs text-slate-500 font-semibold">(大埔氣象站)</span>
+        </div>
+        <div class="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-xl border border-blue-100 shadow-sm">
+          <span id="tpEmoji" class="text-2xl">🌤️</span>
+          <span id="tpDesc" class="text-sm font-bold text-slate-800">載入中</span>
+        </div>
+      </div>
+
+      <!-- 濕度、雨量、AQHI 三分格 -->
+      <div class="grid grid-cols-3 gap-2 pt-1 text-center">
+        <div class="bg-white p-1.5 rounded-lg border border-slate-200 shadow-sm">
+          <div class="text-[11px] text-slate-500 font-medium">相對濕度</div>
+          <div id="tpHum" class="text-sm font-bold text-slate-800 mt-0.5">--%</div>
+        </div>
+        <div class="bg-white p-1.5 rounded-lg border border-slate-200 shadow-sm">
+          <div class="text-[11px] text-slate-500 font-medium">過去一小時雨量</div>
+          <div id="tpRain" class="text-sm font-bold text-blue-600 mt-0.5">0.0 mm</div>
+        </div>
+        <div class="bg-white p-1.5 rounded-lg border border-slate-200 shadow-sm">
+          <div class="text-[11px] text-slate-500 font-medium">AQHI (大埔)</div>
+          <div id="tpAqhi" class="text-sm font-bold text-emerald-600 mt-0.5">-- (低)</div>
+        </div>
+      </div>
+
+      <!-- 天氣預測簡述 -->
+      <div class="mt-2 text-xs text-slate-600 bg-white p-2 rounded-lg border border-blue-100 shadow-sm flex items-start gap-1">
+        <span class="text-blue-600 font-bold flex-none">預測:</span>
+        <span id="tpBrief" class="leading-relaxed">香港天文台今日天氣預測載入中...</span>
+      </div>
+    </div>
+
+    <!-- 未來 1 小時降雨臨近預報 -->
+    <div class="nowcast-card space-y-3">
+      <!-- 標題、經緯度與更新按鈕 -->
+      <div class="flex items-center justify-between pb-2 border-b border-blue-200">
+        <div class="flex items-center gap-2">
+          <span class="text-sm font-bold text-slate-800">🌧️ 未來 1 小時降雨預測</span>
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-blue-100 text-blue-800 border border-blue-200">
+            <i class="ti ti-map-pin text-xs"></i> <span id="locDisplayLabel">22.4578, 114.1683</span>
+          </span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <button onclick="toggleCoordEdit()" title="自訂經緯度" class="flex items-center justify-center p-1.5 rounded-lg bg-white hover:bg-slate-100 active:scale-95 text-slate-600 hover:text-slate-900 border border-slate-300 shadow-sm transition">
+            <i class="ti ti-adjustments-horizontal text-sm"></i>
+          </button>
+          <button onclick="fetchRainData()" id="refreshRainBtn" title="手動刷新" class="flex items-center justify-center p-1.5 rounded-lg bg-white hover:bg-slate-100 active:scale-95 text-slate-600 hover:text-slate-900 border border-slate-300 shadow-sm transition">
+            <i id="refreshRainIcon" class="ti ti-refresh text-sm"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- 座標修改表單 (可收合) -->
+      <div id="coordEditBox" class="hidden bg-white p-3 rounded-xl border border-blue-200 shadow-sm text-xs space-y-2">
+        <div class="text-slate-700 font-bold flex items-center justify-between">
+          <span>經緯度自訂與網格匹配</span>
+          <span id="matchedGridNote" class="text-[10px] text-blue-600 font-medium"></span>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] text-slate-500 mb-0.5">緯度 (Latitude)</label>
+            <input id="customLat" type="number" step="0.0001" class="w-full p-1.5 bg-slate-50 border border-slate-300 rounded text-xs font-mono text-slate-800 outline-none focus:border-blue-500" value="22.4578">
+          </div>
+          <div>
+            <label class="block text-[10px] text-slate-500 mb-0.5">經度 (Longitude)</label>
+            <input id="customLon" type="number" step="0.0001" class="w-full p-1.5 bg-slate-50 border border-slate-300 rounded text-xs font-mono text-slate-800 outline-none focus:border-blue-500" value="114.1683">
+          </div>
+        </div>
+        <div class="flex gap-2 pt-1">
+          <button onclick="applyCustomCoord()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-1.5 px-3 rounded-lg text-xs transition">查詢並鎖定最近網點</button>
+          <button onclick="resetCoordDefault()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-1.5 px-3 rounded-lg text-xs transition">重設大埔預設</button>
+        </div>
+      </div>
+
+      <!-- 1小時內綜合建議卡片 -->
+      <div id="summaryCard" class="p-2.5 rounded-xl bg-white border border-blue-100 shadow-sm flex items-center justify-between">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div id="summaryIconBox" class="w-9 h-9 rounded-lg flex items-center justify-center bg-blue-100 text-blue-600 text-lg shrink-0">
+            <i id="summaryIcon" class="ti ti-umbrella"></i>
+          </div>
+          <div class="min-w-0">
+            <div class="text-[11px] text-slate-500 font-medium">1 小時內綜合建議</div>
+            <div id="summaryText" class="text-xs font-bold text-slate-800 mt-0.5 truncate">正在分析雷達雨量數據...</div>
+          </div>
+        </div>
+        <div class="text-right shrink-0 ml-2">
+          <div class="text-[10px] text-slate-500">最高機率</div>
+          <div id="summaryMaxProb" class="text-xl font-black text-blue-700 font-mono">--%</div>
+        </div>
+      </div>
+
+      <!-- 5 個 12 分鐘時段列表 (無 [ ] 符號，乾淨呈現) -->
+      <div class="space-y-1.5">
+        <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 px-1">
+          <span>時段範圍</span>
+          <span>降雨機率</span>
+        </div>
+        <div id="intervalList" class="space-y-1.5">
+          <div class="py-4 text-center text-slate-500 text-xs space-y-1 bg-white rounded-xl border border-slate-200">
+            <i class="ti ti-loader animate-spin text-lg text-blue-600 block mx-auto"></i>
+            <span>正在同步天文台最新數據...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 路線查詢與快捷鍵 -->
+    <h2 class="text-lg font-bold mb-3">輸入路線號碼</h2>
+    <input id="route" class="w-full rounded-lg border-2 border-slate-300 p-3 text-lg uppercase outline-none focus:border-slate-600" placeholder="例如：73X, 71A, 74X, 271" oninput="checkEasterEgg()" onkeydown="if(event.key==='Enter')searchRoute()">
+    <button id="searchBtn" class="primary" onclick="searchRoute()">查詢九巴和龍運巴士路線</button>
+
+    <div class="mt-4 text-sm font-bold text-slate-700 mb-2 flex items-center justify-between">
+      <span>出發</span>
+      <span class="text-xs text-rose-600 font-semibold">即時預測</span>
+    </div>
+    <button class="option shortcut-blue" onclick="quick71()"><span class="shortcut-text">71A：往 大埔墟站（富亨總站）<span id="p71" class="home-eta">正在讀取最近兩班…</span></span><span>→</span></button>
+    <button class="option shortcut-blue" onclick="quick71b()"><span class="shortcut-text">71B：往 大埔中心（富亨總站 循環線）<span id="p71b" class="home-eta">正在讀取最近兩班…</span></span><span>→</span></button>
+    <button class="option shortcut-blue" onclick="quick271Out()"><span class="shortcut-text">271：往 西九龍站（富亨總站）<span id="p271out" class="home-eta">正在讀取最近兩班…</span></span><span>→</span></button>
+    <button class="option shortcut-blue" onclick="quick72x()"><span class="shortcut-text">72X：往 旺角(柏景灣)（頌雅苑站）<span id="p72x" class="home-eta">正在讀取最近兩班…</span></span><span>→</span></button>
+
+    <div class="mt-4 text-sm font-bold text-slate-700 mb-2">回家</div>
+    <button class="option shortcut-yellow" onclick="quick71Return()"><span class="shortcut-text">71A：往 富亨總站（大埔墟站）<span id="p71r" class="home-eta">正在讀取最近兩班…</span></span><span>→</span></button>
+    <button class="option shortcut-yellow" onclick="quick71bReturn()"><span class="shortcut-text">71B：往 富亨總站（大埔中心站）<span id="p71br" class="home-eta">正在讀取最近兩班…</span></span><span>→</span></button>
+    <button class="option shortcut-yellow" onclick="quick271Return()"><span class="shortcut-text">271：往 富亨總站（廣福道轉車站）<span id="p271r" class="home-eta">正在讀取最近兩班…</span></span><span>→</span></button>
+    <button class="option shortcut-purple" onclick="quick72xReclamation()"><span class="shortcut-text">72X：往 富蝶總站（新填地街）<span id="p72x_rec" class="home-eta">正在讀取最近兩班…</span></span><span>→</span></button>
+    <button class="option shortcut-purple" onclick="quick72xMongKok()"><span class="shortcut-text">72X：往 富蝶總站（旺角道）<span id="p72x_mk" class="home-eta">正在讀取最近兩班…</span></span><span>→</span></button>
+  </section>
+
+  <section id="step3" class="panel"><h2 class="text-lg font-bold mb-3">請選擇行駛方向與班次</h2><div id="bounds"></div></section>
+  <section id="step4" class="panel"><h2 class="text-lg font-bold mb-3">請點擊車站查看實時到站時間</h2><div id="stops" class="timeline"></div><div id="updated" class="meta">--</div></section>
+  <section id="step5" class="panel"><div id="specialCards"></div><div id="specialUpdated" class="meta">--</div></section>
+  <section id="step6" class="panel"><div class="love-card text-center space-y-4"><div class="text-3xl">💖 幸福快車資訊 💖</div><div id="loveContent" class="text-left text-slate-800 space-y-4 text-base font-semibold leading-relaxed pt-2"></div></div></section>
+</main>
+<div id="load"><div class="spin"></div><div id="loadText">正在讀取數據...</div></div>
+
+<script>
+const API='https://data.etabus.gov.hk/v1/transport/kmb',
+      HKO_WEATHER='https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=rhrread&lang=tc',
+      HKO_FLW='https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=flw&lang=tc',
+      HKO_WARN='https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=warnsum&lang=tc',
+      DASHBOARD_AQHI='https://dashboard.data.gov.hk/api/aqhi-individual?format=json',
+      FILTER_AQHI='https://api.data.gov.hk/v1/filter?s=aqhi-individual-station&lang=tc',
+      $ = id => document.getElementById(id);
+
+let step=2,routeItem,stops=[],timer,cache,cacheAt=0,busy=false,selected=null;
+const stopCache={};
+
+/* 預設經緯度（大埔 頌雅苑） */
+const DEFAULT_LAT = 22.4578;
+const DEFAULT_LON = 114.1683;
+let currentTargetLat = DEFAULT_LAT;
+let currentTargetLon = DEFAULT_LON;
+let activeGridLat = DEFAULT_LAT;
+let activeGridLon = DEFAULT_LON;
+
+/* 天氣圖標對照表 */
+const WX_ICON_MAP = {
+  50: { desc: "陽光充沛", emoji: "☀️" }, 51: { desc: "大致天晴", emoji: "🌤️" },
+  52: { desc: "短暫陽光", emoji: "⛅" }, 53: { desc: "短暫陽光有驟雨", emoji: "🌦️" },
+  54: { desc: "短暫陽光有雷雨", emoji: "⛈️" }, 60: { desc: "多雲", emoji: "☁️" },
+  61: { desc: "密雲", emoji: "🌥️" }, 62: { desc: "微雨", emoji: "🌧️" },
+  63: { desc: "雨", emoji: "🌧️" }, 64: { desc: "大雨", emoji: "🌧️" },
+  65: { desc: "雷暴", emoji: "⛈️" }, 70: { desc: "天色良好", emoji: "🌙" },
+  71: { desc: "天色良好", emoji: "🌙" }, 72: { desc: "初時多雲", emoji: "🌤️" },
+  73: { desc: "初時多雲有驟雨", emoji: "🌦️" }, 74: { desc: "初時多雲有雷雨", emoji: "⛈️" },
+  75: { desc: "初時多雲", emoji: "⛅" }, 76: { desc: "初時多雲", emoji: "⛅" },
+  77: { desc: "天色明朗", emoji: "☀️" }, 80: { desc: "有風", emoji: "💨" },
+  81: { desc: "乾燥", emoji: "🏜️" }, 82: { desc: "潮濕", emoji: "💧" },
+  83: { desc: "有霧", emoji: "🌫️" }, 84: { desc: "有薄霧", emoji: "🌫️" },
+  85: { desc: "有煙霞", emoji: "🌫️" }, 90: { desc: "熱", emoji: "🥵" },
+  91: { desc: "暖", emoji: "🌤️" }, 92: { desc: "涼", emoji: "🍃" }, 93: { desc: "冷", emoji: "🥶" }
+};
+
+/* 氣溫色彩 */
+const TEMP_COLOR_MAP = {
+  0: '#4A0E4E', 5: '#15318C', 10: '#1567B9', 15: '#29B6F6', 18: '#27ACBF',
+  20: '#26A69A', 22: '#7DB46C', 24: '#D4C33F', 26: '#FFB82D', 28: '#FF9438',
+  30: '#FF7043', 32: '#EE4B3A', 34: '#D9322F', 36: '#C22322', 38: '#931315'
+};
+function getTempColor(val) {
+  const rounded = Math.round(val);
+  if (rounded <= 10) return '#1567B9';
+  if (rounded >= 34) return '#D9322F';
+  for (let k of Object.keys(TEMP_COLOR_MAP).map(Number).sort((a,b)=>b-a)) {
+    if (rounded >= k) return TEMP_COLOR_MAP[k];
+  }
+  return '#1d4ed8';
+}
+
+function loading(on,msg='正在讀取數據...'){$('load').style.display=on?'flex':'none';$('loadText').textContent=msg}
+
+async function get(u){
+  let c=new AbortController,t=setTimeout(()=>c.abort(),9000);
+  try{let r=await fetch(u,{signal:c.signal});if(!r.ok)throw Error();return r.json()}
+  finally{clearTimeout(t)}
+}
+
+async function routes(){
+  if(cache&&Date.now()-cacheAt<6e4)return cache;
+  cache=(await get(API+'/route/')).data||[];
+  cacheAt=Date.now();
+  return cache;
+}
+
+function setEva(on,target){
+  $('evaOverlay').style.display=on?'block':'none';
+  $('header').classList.toggle('eva-header',on);
+  document.querySelectorAll('.eva-card-lock').forEach(x=>x.classList.remove('eva-card-lock'));
+  if(on&&target)target.classList.add('eva-card-lock');
+}
+
+function setStep(n){
+  step=n;
+  [2,3,4,5,6].forEach(i=>$('step'+i).classList.toggle('active',i===n));
+  $('back').style.display=n>2?'block':'none';
+  $('header').classList.toggle('kmb',n===4||n===5);
+  $('header').classList.toggle('love',n===6);
+  if(n===2||n===3||n===6)setEva(false);
+  if(n===2){$('headMain').textContent='即時到站查詢';$('headSub').style.display='none';home()}
+  if(n!==4&&n!==5){clearInterval(timer);selected=null}
+}
+
+function goBack(){setEva(false);setStep(step===5||step===6?2:step-1)}
+function fmt(t){return new Date(t).toLocaleTimeString('zh-HK',{hour:'2-digit',minute:'2-digit',hour12:true})}
+function mins(t){return Math.max(0,Math.round((new Date(t)-Date.now())/6e4))}
+function up(a){return(a||[]).filter(x=>x?.eta&&new Date(x.eta)>new Date()).sort((a,b)=>new Date(a.eta)-new Date(b.eta))}
+function two(a){let x=up(a).slice(0,2);return x.length?x.map(e=>fmt(e.eta)+'（尚餘'+mins(e.eta)+'分鐘）').join('；'):'暫無即時班次'}
+function checkEasterEgg(){let x=$('route').value.trim()==='1227';$('searchBtn').classList.toggle('btn-gold',x);$('searchBtn').textContent=x?'幸福快車查詢':'查詢九巴和龍運巴士路線'}
+function love(){
+  let s=new Date(2014,11,27),n=new Date(),d=Math.floor((n-s)/864e5)+1;
+  $('headMain').textContent='幸福快車專用查詢';
+  $('headSub').textContent='心愛老婆專屬';
+  $('headSub').style.display='block';
+  $('loveContent').innerHTML='<p class="text-lg font-bold text-rose-600">心愛的 Ding3 Ding1：</p><p>你已跟心愛老公相愛了 <span class="text-2xl love-days-highlight">'+d+'</span> 天</p><p>如想了解更多，請立即打電話給老公！</p><p class="text-right text-rose-600">心愛老公上</p>';
+  setStep(6);
+}
+
+/* ================= 大埔即時氣象 ================= */
+async function updateTaiPoWeather() {
+  try {
+    const d = await get(HKO_WEATHER);
+    let t = d.temperature?.data?.find(x => x.place === '大埔') || d.temperature?.data?.[0];
+    if (t) {
+      let tempNum = Math.round(parseFloat(t.value));
+      $('tpTemp').textContent = `${tempNum}°C`;
+      $('tpTemp').style.color = getTempColor(tempNum);
+    }
+
+    let iconNum = (d.icon && d.icon[0]) || 50;
+    let wxInfo = WX_ICON_MAP[iconNum] || { desc: "大致天晴", emoji: "🌤️" };
+    $('tpDesc').textContent = wxInfo.desc;
+    $('tpEmoji').textContent = wxInfo.emoji;
+
+    let humItem = d.humidity?.data?.find(x => x.place === '大埔') || d.humidity?.data?.[0];
+    if (humItem) {
+      $('tpHum').textContent = `${humItem.value}%`;
+    }
+
+    let rainItem = d.rainfall?.data?.find(x => x.place === '大埔') || { max: 0 };
+    let rainVal = parseFloat(rainItem.max || 0);
+    $('tpRain').textContent = `${rainVal.toFixed(1)} mm`;
+
+    $('wxUpdateTime').textContent = '更新於 ' + new Date().toLocaleTimeString('zh-HK', { hour: '2-digit', minute: '2-digit' });
+
+    updateWeatherBrief();
+    updateWeatherWarnings();
+    updateTaiPoAQHI();
+  } catch(e) {
+    console.warn('大埔氣象資料獲取失敗:', e);
+  }
+}
+
+async function updateWeatherBrief() {
+  try {
+    const flwData = await get(HKO_FLW);
+    let desc = flwData?.forecastDesc || '';
+    if (desc) {
+      let match = desc.match(/^([^。.\n]+)[。.]?/);
+      $('tpBrief').textContent = (match ? match[1].trim() : desc.trim()) + '。';
+    }
+  } catch(e) {}
+}
+
+async function updateWeatherWarnings() {
+  try {
+    const warnData = await get(HKO_WARN);
+    const keys = Object.keys(warnData || {});
+    const badge = $('wxWarnBadge');
+    if (keys.length > 0) {
+      const first = warnData[keys[0]];
+      badge.textContent = `⚠ ${first.name || '天氣警告生效'}`;
+      badge.classList.remove('hidden');
+    } else {
+      badge.classList.add('hidden');
+    }
+  } catch(e) {
+    $('wxWarnBadge').classList.add('hidden');
+  }
+}
+
+async function updateTaiPoAQHI() {
+  try {
+    let data = null;
+    try { data = await get(DASHBOARD_AQHI); } catch(e) { data = await get(FILTER_AQHI); }
+    let list = Array.isArray(data) ? data : (data?.records || data?.data || []);
+    if (Array.isArray(list)) {
+      let tp = list.find(item => {
+        let st = String(item?.station || '').trim();
+        return st === '大埔' || st.includes('大埔') || st.toLowerCase().includes('tai po');
+      });
+      if (tp) {
+        let val = tp.aqhi ?? tp.aqhi_value ?? '3';
+        let risk = tp.health_risk ?? tp.healthRisk ?? '低';
+        const riskMap = { 'Low': '低', 'Moderate': '中', 'High': '高', 'Very High': '甚高', 'Serious': '嚴重' };
+        if (riskMap[risk]) risk = riskMap[risk];
+        $('tpAqhi').textContent = `${val} (${risk})`;
+      }
+    }
+  } catch(e) {}
+}
+
+/* ================= 未來 1 小時降雨臨近預報 ================= */
+function format12h(date) {
+  const hours = date.getHours();
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const period = hours < 12 ? '上午' : '下午';
+  let h12 = hours % 12;
+  if (h12 === 0) h12 = 12;
+  return `${period}${h12}:${minutes}`;
+}
+
+function calculateProbability(rainMm) {
+  if (rainMm <= 0.02) return 0;
+  if (rainMm < 0.5) return Math.min(45, Math.round(20 + rainMm * 40));
+  if (rainMm < 2.0) return Math.min(75, Math.round(50 + (rainMm - 0.5) * 16));
+  if (rainMm < 5.0) return Math.min(90, Math.round(75 + (rainMm - 2.0) * 5));
+  return Math.min(99, Math.round(90 + (rainMm - 5.0) * 1.5));
+}
+
+function getProbStyle(prob) {
+  if (prob < 20) {
+    return { textColor: "text-emerald-600", barColor: "bg-emerald-500", statusText: "微乎其微", icon: "ti-sun" };
+  } else if (prob < 50) {
+    return { textColor: "text-amber-600", barColor: "bg-amber-500", statusText: "局部零星雨", icon: "ti-cloud" };
+  } else if (prob < 80) {
+    return { textColor: "text-blue-600", barColor: "bg-blue-500", statusText: "有陣雨", icon: "ti-cloud-rain" };
+  } else {
+    return { textColor: "text-rose-600", barColor: "bg-rose-500", statusText: "大雨機率高", icon: "ti-cloud-storm" };
+  }
+}
+
+async function fetchRainCsvWithFallback() {
+  const directUrl = 'https://data.weather.gov.hk/weatherAPI/hko_data/F3/Gridded_rainfall_nowcast.csv';
+  const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(directUrl)}`;
+
+  try {
+    let res = await fetch(directUrl);
+    if (res.ok) return await res.text();
+  } catch(e) {}
+
+  let res2 = await fetch(proxyUrl);
+  if (res2.ok) return await res2.text();
+  throw new Error('無法載入天文台網格降雨數據');
+}
+
+async function fetchRainData() {
+  const refreshIcon = $('refreshRainIcon');
+  if (refreshIcon) refreshIcon.classList.add('animate-spin');
+
+  let baseDate = new Date();
+  let rainValues = [];
+
+  try {
+    const csvText = await fetchRainCsvWithFallback();
+    const lines = csvText.trim().split('\n');
+
+    let grids = [];
+    for (let i = 1; i < lines.length; i++) {
+      const cols = lines[i].split(',');
+      if (cols.length >= 5) {
+        const updatedStr = cols[0].trim();
+        if (i === 1 && updatedStr.length === 12) {
+          const y = parseInt(updatedStr.substring(0, 4), 10);
+          const m = parseInt(updatedStr.substring(4, 6), 10) - 1;
+          const d = parseInt(updatedStr.substring(6, 8), 10);
+          const hh = parseInt(updatedStr.substring(8, 10), 10);
+          const mm = parseInt(updatedStr.substring(10, 12), 10);
+          baseDate = new Date(y, m, d, hh, mm);
+        }
+
+        const lat = parseFloat(cols[2]);
+        const lon = parseFloat(cols[3]);
+        const rain = parseFloat(cols[4]) || 0;
+        const distSq = Math.pow(lat - currentTargetLat, 2) + Math.pow(lon - currentTargetLon, 2);
+        grids.push({ lat, lon, rain, distSq });
+      }
+    }
+
+    if (grids.length > 0) {
+      grids.sort((a, b) => a.distSq - b.distSq);
+      activeGridLat = grids[0].lat;
+      activeGridLon = grids[0].lon;
+      rainValues = grids.slice(0, 5).map(g => g.rain);
+      $('matchedGridNote').textContent = `最近網點: ${activeGridLat.toFixed(4)}, ${activeGridLon.toFixed(4)}`;
+    }
+  } catch (err) {
+    console.warn('降雨臨近預報數據讀取回退:', err);
+  } finally {
+    if (refreshIcon) refreshIcon.classList.remove('animate-spin');
+  }
+
+  if (rainValues.length < 5) {
+    rainValues = [0, 0, 0, 0, 0];
+  }
+
+  render1HourSchedule(baseDate, rainValues);
+}
+
+function render1HourSchedule(baseDate, rainValues) {
+  const listContainer = $('intervalList');
+  listContainer.innerHTML = '';
+  let maxProb = 0;
+
+  for (let i = 0; i < 5; i++) {
+    const startMin = i * 12;
+    const endMin = (i + 1) * 12;
+    const startTime = new Date(baseDate.getTime() + startMin * 60000);
+    const endTime = new Date(baseDate.getTime() + endMin * 60000);
+
+    /* 格式：下午HH:MM - 下午HH:MM (已刪除 [ 與 ]) */
+    const formattedInterval = `${format12h(startTime)} - ${format12h(endTime)}`;
+    const rain = rainValues[i] !== undefined ? rainValues[i] : 0;
+    const prob = calculateProbability(rain);
+    if (prob > maxProb) maxProb = prob;
+
+    const style = getProbStyle(prob);
+
+    const itemHtml = `
+      <div class="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200 shadow-sm hover:border-blue-300 transition">
+        <div class="flex items-center gap-2">
+          <div class="w-5 h-5 rounded-md bg-blue-50 text-blue-700 font-bold flex items-center justify-center font-mono text-[10px] shrink-0">
+            ${i + 1}
+          </div>
+          <div>
+            <div class="text-xs font-bold tracking-tight text-slate-800 font-mono">
+              ${formattedInterval}
+            </div>
+            <div class="text-[10px] text-slate-500 flex items-center gap-1 mt-0.5">
+              <i class="ti ${style.icon}"></i> ${style.statusText} ${rain > 0 ? `· 預測約 ${rain.toFixed(1)} mm` : ''}
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="w-12 bg-slate-100 h-1.5 rounded-full overflow-hidden hidden sm:block border border-slate-200">
+            <div class="${style.barColor} h-full rounded-full" style="width: ${prob}%"></div>
+          </div>
+          <div class="min-w-[45px] text-right">
+            <span class="text-sm font-black font-mono ${style.textColor}">${prob}%</span>
+          </div>
+        </div>
+      </div>
+    `;
+    listContainer.insertAdjacentHTML('beforeend', itemHtml);
+  }
+
+  $('summaryMaxProb').innerText = `${maxProb}%`;
+  const summaryText = $('summaryText');
+  const summaryIcon = $('summaryIcon');
+  const summaryBox = $('summaryIconBox');
+
+  if (maxProb < 20) {
+    summaryText.innerText = `未來 1 小時無明顯降雨，適宜外出 ☀️`;
+    summaryIcon.className = "ti ti-sun text-emerald-600";
+    summaryBox.className = "w-9 h-9 rounded-lg flex items-center justify-center bg-emerald-100 text-lg shrink-0";
+  } else if (maxProb < 50) {
+    summaryText.innerText = `局部零星微雨經過周邊，建議備傘 ⛅`;
+    summaryIcon.className = "ti ti-cloud text-amber-600";
+    summaryBox.className = "w-9 h-9 rounded-lg flex items-center justify-center bg-amber-100 text-lg shrink-0";
+  } else if (maxProb < 80) {
+    summaryText.innerText = `預計有陣雨經過目標區域，出門請備雨具 🌧️`;
+    summaryIcon.className = "ti ti-umbrella text-blue-600";
+    summaryBox.className = "w-9 h-9 rounded-lg flex items-center justify-center bg-blue-100 text-lg shrink-0";
+  } else {
+    summaryText.innerText = `高機率有明顯降雨，請注意防雨防雷 ⛈️`;
+    summaryIcon.className = "ti ti-cloud-storm text-rose-600";
+    summaryBox.className = "w-9 h-9 rounded-lg flex items-center justify-center bg-rose-100 text-lg shrink-0";
+  }
+}
+
+function toggleCoordEdit() {
+  $('coordEditBox').classList.toggle('hidden');
+}
+
+function applyCustomCoord() {
+  let lat = parseFloat($('customLat').value);
+  let lon = parseFloat($('customLon').value);
+  if (isNaN(lat) || isNaN(lon) || lat < 22.0 || lat > 22.7 || lon < 113.8 || lon > 114.5) {
+    alert('請輸入有效之香港境內經緯度（緯度約 22.1~22.6，經度約 113.8~114.4）');
+    return;
+  }
+  currentTargetLat = lat;
+  currentTargetLon = lon;
+  $('locDisplayLabel').textContent = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+  $('coordEditBox').classList.add('hidden');
+  fetchRainData();
+}
+
+function resetCoordDefault() {
+  currentTargetLat = DEFAULT_LAT;
+  currentTargetLon = DEFAULT_LON;
+  $('customLat').value = DEFAULT_LAT;
+  $('customLon').value = DEFAULT_LON;
+  $('locDisplayLabel').textContent = `${DEFAULT_LAT.toFixed(4)}, ${DEFAULT_LON.toFixed(4)}`;
+  $('coordEditBox').classList.add('hidden');
+  fetchRainData();
+}
+
+/* ================= 快捷九巴路線 ETA ================= */
+async function getRouteStops(r,bound='outbound',service='1'){
+  let k=`rs_${r}_${bound}_${service}`;
+  if(stopCache[k])return stopCache[k];
+  try{
+    let res=(await get(`${API}/route-stop/${r}/${bound}/${service}`)).data||[];
+    if(res.length)stopCache[k]=res;
+    return res;
+  }catch{return[]}
+}
+
+async function getStopName(id){
+  let k=`sn_${id}`;
+  if(stopCache[k])return stopCache[k];
+  try{
+    let res=await get(`${API}/stop/${id}`);
+    let n=res?.data?.name_tc||'';
+    if(n)stopCache[k]=n;
+    return n;
+  }catch{return''}
+}
+
+async function findStopByQuery(r,bound='outbound',service='1',queryOrSeq=1){
+  let rs=await getRouteStops(r,bound,service);
+  if(!rs.length)return null;
+  if(typeof queryOrSeq==='number'){
+    let s=rs.find(x=>+x.seq===queryOrSeq)||rs[queryOrSeq-1]||rs[0];
+    let name=await getStopName(s.stop);
+    return{stop:s.stop,name:name||'',seq:s.seq};
+  }
+  for(let s of rs){
+    let name=await getStopName(s.stop);
+    if(name&&(name.includes(queryOrSeq)||(s.stop&&s.stop.includes(queryOrSeq)))){
+      return{stop:s.stop,name,seq:s.seq};
+    }
+  }
+  if(rs[0]){
+    let name=await getStopName(rs[0].stop);
+    return{stop:rs[0].stop,name:name||'',seq:rs[0].seq};
+  }
+  return null;
+}
+
+async function getEtaForStop(r,bound='outbound',service='1',queryOrSeq=1){
+  try{
+    let target=await findStopByQuery(r,bound,service,queryOrSeq);
+    if(!target)return{stop:null,name:'',seq:1,etas:[]};
+    let dir=bound==='outbound'?'O':'I';
+    let raw=(await get(`${API}/eta/${target.stop}/${r}/${service}`)).data||[];
+    let etas=raw.filter(x=>x.eta&&(x.dir===dir||!x.dir));
+    return{stop:target.stop,name:target.name,seq:target.seq,etas};
+  }catch{
+    return{stop:null,name:'',seq:1,etas:[]};
+  }
+}
+
+async function home(){
+  if(step!==2||busy)return;
+  busy=true;
+  try{
+    let[d71a,d71b,d271out,d72x,d71r,d71br,d271r,d72x_rec,d72x_mk]=await Promise.all([
+      getEtaForStop('71A','outbound','1',1),
+      getEtaForStop('71B','outbound','1',1),
+      getEtaForStop('271','outbound','1',1),
+      getEtaForStop('72X','outbound','1','頌雅苑'),
+      getEtaForStop('71A','inbound','1','大埔墟'),
+      getEtaForStop('71B','outbound','1','大埔中心'),
+      getEtaForStop('271','inbound','1','廣福道'),
+      getEtaForStop('72X','inbound','1','新填地街'),
+      getEtaForStop('72X','inbound','1','旺角道')
+    ]);
+    if(step===2){
+      $('p71').textContent=two(d71a.etas);
+      $('p71b').textContent=two(d71b.etas);
+      $('p271out').textContent=two(d271out.etas);
+      $('p72x').textContent=two(d72x.etas);
+      $('p71r').textContent=two(d71r.etas);
+      $('p71br').textContent=two(d71br.etas);
+      $('p271r').textContent=two(d271r.etas);
+      $('p72x_rec').textContent=two(d72x_rec.etas);
+      $('p72x_mk').textContent=two(d72x_mk.etas);
+    }
+  }finally{busy=false}
+}
+
+async function searchRoute(){
+  let r=$('route').value.trim().toUpperCase();
+  if(!r)return alert('請輸入路線號碼！');
+  if(r==='1227')return love();
+  loading(true);
+  try{
+    let d=(await routes()).filter(x=>x.route===r).map(x=>({
+      route:x.route,
+      bound:x.bound==='O'?'outbound':'inbound',
+      service:x.service_type,
+      orig:x.orig_tc,
+      dest:x.dest_tc,
+      desc:x.service_type==='1'?'常規班次':'特別班次 '+x.service_type
+    }));
+    if(!d.length)throw Error('找不到相關路線');
+    $('bounds').innerHTML='';
+    d.forEach(x=>{
+      let b=document.createElement('button');
+      b.className='option';
+      b.innerHTML='<span><b class="tag">九巴／龍運</b>　'+x.desc+'：'+x.orig+' 往 '+x.dest+'</span><span>→</span>';
+      b.onclick=()=>choose(x);
+      $('bounds').appendChild(b);
+    });
+    setStep(3);
+  }catch(e){
+    alert(e.message||'查詢網絡失敗');
+  }finally{loading(false)}
+}
+
+function start(a,b,fn){
+  setStep(5);
+  $('headMain').textContent=a;
+  $('headSub').textContent=b;
+  $('headSub').style.display='block';
+  fn();
+  clearInterval(timer);
+  timer=setInterval(fn,15000);
+}
+
+function cards(c){
+  let ai=-1;
+  let html=c.map((x,i)=>{
+    let a=up(x.etas);
+    let soon=a[0]&&mins(a[0].eta)<=1;
+    if(ai<0&&soon)ai=i;
+    return(x.routeLabel?'<div class="route-label">'+x.routeLabel+'</div>':'')+
+      '<div id="specCard_'+i+'" class="custom'+(soon?' is-approaching eva-card-lock':'')+'">'+
+      '<div class="custom-head"><div class="custom-title">'+x.label+'</div>'+
+      '<span class="badge">'+(soon?'<span class="arrival-label">⚠目標接近中</span>':'本站預測')+'</span></div>'+
+      '<div class="custom-pills">'+
+      (a.length?a.map((e,j)=>'<div class="custom-pill '+(j===0&&mins(e.eta)<=1?'arrival-alert':'')+'"><div class="custom-time">'+fmt(e.eta)+'</div><div class="custom-wait">'+mins(e.eta)+'分鐘</div></div>').join(''):'<div class="w-full text-center py-3 text-slate-500">暫無即時到站班次數據</div>')+
+      '</div></div>';
+  }).join('');
+  $('specialCards').innerHTML=html;
+  let hasAlarm=ai>=0;
+  let activeCard=hasAlarm?$('specCard_'+ai):null;
+  setEva(hasAlarm,activeCard);
+  $('specialUpdated').textContent='最後更新時間：'+new Date().toLocaleTimeString();
+}
+
+/* 出發快捷路線 */
+function quick71(){
+  start('[九巴／龍運] 71A','富亨總站 往 大埔墟站',async()=>{
+    loading(true);
+    try{
+      let r=await getEtaForStop('71A','outbound','1',1);
+      cards([{routeLabel:'71A 大埔（富亨） 往 大埔墟站',label:`${r.seq}. ${r.name}`,etas:r.etas}]);
+    }finally{loading(false)}
+  });
+}
+
+function quick71b(){
+  start('[九巴／龍運] 71B','富亨總站 往 大埔中心（循環線）',async()=>{
+    loading(true);
+    try{
+      let r=await getEtaForStop('71B','outbound','1',1);
+      cards([{routeLabel:'71B 大埔（富亨） 往 大埔中心(循環線)',label:`${r.seq}. ${r.name}`,etas:r.etas}]);
+    }finally{loading(false)}
+  });
+}
+
+function quick271Out(){
+  start('[九巴／龍運] 271','富亨總站 往 西九龍站',async()=>{
+    loading(true);
+    try{
+      let r=await getEtaForStop('271','outbound','1',1);
+      cards([{routeLabel:'271 大埔（富亨） 往 高鐵(西九龍站)',label:`${r.seq}. ${r.name}`,etas:r.etas}]);
+    }finally{loading(false)}
+  });
+}
+
+function quick72x(){
+  start('[九巴／龍運] 72X','頌雅苑 往 旺角(柏景灣)',async()=>{
+    loading(true);
+    try{
+      let r=await getEtaForStop('72X','outbound','1','頌雅苑');
+      cards([{routeLabel:'72X 富蝶總站 往 旺角(柏景灣)',label:`${r.seq}. ${r.name}`,etas:r.etas}]);
+    }finally{loading(false)}
+  });
+}
+
+/* 回家快捷路線 */
+function quick71Return(){
+  start('[九巴／龍運] 71A','大埔墟站 往 富亨總站',async()=>{
+    loading(true);
+    try{
+      let r=await getEtaForStop('71A','inbound','1','大埔墟');
+      cards([{routeLabel:'71A 大埔墟站 往 大埔（富亨）',label:`${r.seq}. ${r.name}`,etas:r.etas}]);
+    }finally{loading(false)}
+  });
+}
+
+function quick71bReturn(){
+  start('[九巴／龍運] 71B','大埔中心 往 富亨總站',async()=>{
+    loading(true);
+    try{
+      let r=await getEtaForStop('71B','outbound','1','大埔中心');
+      cards([{routeLabel:'71B 大埔中心 往 大埔（富亨）',label:`${r.seq}. ${r.name}`,etas:r.etas}]);
+    }finally{loading(false)}
+  });
+}
+
+function quick271Return(){
+  start('[九巴／龍運] 271','廣福道轉車站 往 富亨總站',async()=>{
+    loading(true);
+    try{
+      let r=await getEtaForStop('271','inbound','1','廣福道');
+      cards([{routeLabel:'271 高鐵(西九龍站) 往 大埔(富亨)',label:`${r.seq}. ${r.name}`,etas:r.etas}]);
+    }finally{loading(false)}
+  });
+}
+
+function quick72xReclamation(){
+  start('[九巴／龍運] 72X','新填地街 往 富蝶總站',async()=>{
+    loading(true);
+    try{
+      let r=await getEtaForStop('72X','inbound','1','新填地街');
+      cards([{routeLabel:'72X 旺角(柏景灣) 往 大埔(富蝶)',label:`${r.seq}. ${r.name}`,etas:r.etas}]);
+    }finally{loading(false)}
+  });
+}
+
+function quick72xMongKok(){
+  start('[九巴／龍運] 72X','旺角道 往 富蝶總站',async()=>{
+    loading(true);
+    try{
+      let r=await getEtaForStop('72X','inbound','1','旺角道');
+      cards([{routeLabel:'72X 旺角(柏景灣) 往 大埔(富蝶)',label:`${r.seq}. ${r.name}`,etas:r.etas}]);
+    }finally{loading(false)}
+  });
+}
+
+async function choose(x){
+  routeItem=x;
+  loading(true);
+  try{
+    let rs=(await get(API+'/route-stop/'+x.route+'/'+x.bound+'/'+x.service)).data,
+        ds=await Promise.all(rs.map(s=>get(API+'/stop/'+s.stop).catch(()=>({data:null}))));
+    stops=rs.map((s,i)=>({seq:+s.seq,stop:s.stop,name:ds[i].data?.name_tc||'未知車站'}));
+    $('stops').innerHTML=stops.map((s,i)=>'<div id="stop'+i+'" class="stop"><span class="dot"></span><div class="stop-head" onclick="toggle('+i+')"><span>'+s.seq+'. '+s.name+'</span><span id="arr'+i+'">▼</span></div><div class="detail" id="detail'+i+'">正在載入到站時間...</div></div>').join('');
+    $('headMain').textContent='[九巴／龍運] '+x.route;
+    $('headSub').textContent=x.desc+'：'+x.orig+' 往 '+x.dest;
+    $('headSub').style.display='block';
+    setStep(4);
+    clearInterval(timer);
+    timer=setInterval(()=>{if(step===4&&selected!==null)fetchEta(selected)},15000);
+  }catch{
+    alert('載入車站失敗');
+  }finally{loading(false)}
+}
+
+async function fetchEta(i){
+  if(i===null||step!==4)return setEva(false);
+  let ids=(i===0?[0,1]:i===stops.length-1?[i-1,i]:[i-1,i,i+1]).filter(n=>n>=0&&n<stops.length),
+      dir=routeItem.bound==='outbound'?'O':'I',
+      alarm=false;
+  await Promise.all(ids.map(async n=>{
+    let s=stops[n],d=$('detail'+n),tar=n===i;
+    try{
+      let a=up(((await get(API+'/eta/'+s.stop+'/'+routeItem.route+'/'+routeItem.service)).data||[]).filter(x=>x.eta&&x.dir===dir)),
+          soon=tar&&a[0]&&mins(a[0].eta)<=1;
+      if(soon)alarm=true;
+      d.innerHTML='<div class="'+(tar?'eta target':'eta')+'">'+
+        '<div class="eta-title"><span>'+s.seq+'. '+s.name+'</span>'+
+        '<span class="badge">'+(tar?(soon?'<span class="arrival-label">⚠目標接近中</span>':'🎯 點選車站'):'鄰近車站')+'</span></div>'+
+        '<div class="etas">'+
+        (a.length?a.slice(0,3).map((x,j)=>'<div class="pill '+(tar&&j===0&&mins(x.eta)<=1?'arrival-alert':'')+'"><div class="time">'+fmt(x.eta)+'</div><div class="wait">'+mins(x.eta)+'分鐘</div></div>').join(''):'<span class="text-sm text-slate-500">暫無實時到站數據</span>')+
+        '</div></div>';
+    }catch{
+      d.textContent='暫未能讀取到站資料';
+    }
+  }));
+  let curStop=$('stop'+i);
+  if(curStop){curStop.classList.toggle('is-approaching',alarm)}
+  setEva(alarm,curStop);
+  $('updated').textContent='最後更新時間：'+new Date().toLocaleTimeString();
+}
+
+async function toggle(i){
+  if(selected===i){
+    document.querySelectorAll('.stop').forEach(x=>x.classList.remove('expanded','target-selected','is-approaching'));
+    document.querySelectorAll('[id^=arr]').forEach(x=>x.textContent='▼');
+    selected=null;
+    return setEva(false);
+  }
+  selected=i;
+  let ids=(i===0?[0,1]:i===stops.length-1?[i-1,i]:[i-1,i,i+1]).filter(n=>n>=0&&n<stops.length);
+  document.querySelectorAll('.stop').forEach(x=>x.classList.remove('expanded','target-selected','is-approaching'));
+  document.querySelectorAll('[id^=arr]').forEach(x=>x.textContent='▼');
+  ids.forEach(n=>{
+    $('stop'+n).classList.add('expanded');
+    $('arr'+n).textContent='▲';
+    if(n===i)$('stop'+n).classList.add('target-selected');
+  });
+  $('stop'+i).scrollIntoView({behavior:'smooth',block:'center'});
+  await fetchEta(i);
+}
+
+/* 初始化執行 */
+updateTaiPoWeather();
+fetchRainData();
+home();
+
+/* 自動刷新定時器 */
+setInterval(updateTaiPoWeather, 300000);  // 天氣每 5 分鐘刷新
+setInterval(fetchRainData, 300000);        // 降雨預測每 5 分鐘刷新
+setInterval(()=>{if(step===2)home()}, 15000); // 快捷到站每 15 秒刷新
+</script>
+</body>
+</html>

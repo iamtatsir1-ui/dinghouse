@@ -6,15 +6,10 @@
 <title>丁屋資訊</title>
 <meta name="theme-color" content="#2d3748">
 <meta name="application-name" content="丁屋資訊">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="丁屋資訊">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="icon" type="image/png" sizes="192x192" href="https://files.catbox.moe/ad3ep5.png">
 <link rel="icon" type="image/png" sizes="512x512" href="https://files.catbox.moe/ad3ep5.png">
 <link rel="shortcut icon" href="https://files.catbox.moe/ad3ep5.png">
 <link rel="apple-touch-icon" href="https://files.catbox.moe/ad3ep5.png">
-<link rel="manifest" href='data:application/manifest+json,{"name":"丁屋資訊","short_name":"丁屋資訊","start_url":".","display":"standalone","background_color":"#f4f6f8","theme_color":"#2d3748","icons":[{"src":"https://files.catbox.moe/ad3ep5.png","sizes":"192x192 512x512","type":"image/png","purpose":"any maskable"}]}'>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
@@ -49,36 +44,68 @@ header.eva-header{background:#050505!important}
 .timeline{position:relative;margin:8px 0 0 24px}
 .timeline:before{content:"";position:absolute;left:-17px;top:15px;bottom:25px;width:3px;background:#e2e8f0}
 .stop{position:relative;border:1.5px solid #e2e8f0;border-radius:10px;margin-bottom:12px;background:#fff;scroll-margin-top:45px}
-.stop.target-selected{border-color:transparent!important;background:linear-gradient(#fff,#fff) padding-box,linear-gradient(135deg,#e31836,#ff6b81,#ff3366,#ffa07a,#e31836) border-box!important;background-size:250% 250%!important;animation:flow 3s ease infinite,pulse 2s ease-in-out infinite alternate!important}
-.stop.target-selected .stop-head{background:linear-gradient(90deg,#fff1f2,#ffe4e6,#fff1f2);background-size:200% 100%;animation:shine 3s ease infinite;color:var(--red);font-weight:800}
-.dot{position:absolute;left:-29px;top:16px;width:12px;height:12px;border:3px solid #718096;border-radius:50%;background:#fff}
-.stop.target-selected .dot{border-color:var(--red);background:var(--red);animation:ping 1.5s infinite}
 
-/* 特急出動模式 */
+/* 一般點選車站：靜態高亮，不閃爍 */
+.stop.target-selected{
+  border-color:var(--red)!important;
+  background:#fff;
+  box-shadow:0 0 0 2px rgba(227,24,54,0.15);
+}
+.stop.target-selected .stop-head{
+  background:#fff1f2;
+  color:var(--red);
+  font-weight:800;
+}
+.stop.target-selected .dot{
+  border-color:var(--red);
+  background:var(--red);
+}
+
+/* 特急出動模式（接近到站時才啟動高動感閃爍） */
 .stop.target-selected.is-approaching,
 .custom.is-approaching,
-.custom.eva-card-lock{border-color:transparent!important;background:linear-gradient(#fff,#fff) padding-box,repeating-linear-gradient(135deg,#ff003c 0 14px,#ffeb3b 14px 28px,#ff003c 28px 42px,#ffffff 42px 48px) border-box!important;background-size:200% 200%!important;animation:dispatchBorder .5s linear infinite,dispatchGlow .7s ease-in-out infinite alternate!important}
+.custom.eva-card-lock{
+  border-color:transparent!important;
+  background:linear-gradient(#fff,#fff) padding-box,repeating-linear-gradient(135deg,#ff003c 0 14px,#ffeb3b 14px 28px,#ff003c 28px 42px,#ffffff 42px 48px) border-box!important;
+  background-size:200% 200%!important;
+  animation:dispatchBorder .5s linear infinite,dispatchGlow .7s ease-in-out infinite alternate!important;
+}
 .stop.target-selected.is-approaching .stop-head,
 .custom.is-approaching .custom-head,
-.custom.eva-card-lock .custom-head{background:linear-gradient(90deg,#ffe4e6,#fff0f3,#ffe4e6)!important;border-radius:6px;padding:4px 8px;color:#b91c1c!important;font-weight:900!important;animation:headAlert .45s steps(2,end) infinite!important}
-.stop.target-selected.is-approaching .dot{border-color:#ffea00!important;background:#ff003c!important;animation:urgentDotPing .55s infinite!important}
+.custom.eva-card-lock .custom-head{
+  background:linear-gradient(90deg,#ffe4e6,#fff0f3,#ffe4e6)!important;
+  border-radius:6px;
+  padding:4px 8px;
+  color:#b91c1c!important;
+  font-weight:900!important;
+  animation:headAlert .45s steps(2,end) infinite!important;
+}
+.stop.target-selected.is-approaching .dot{
+  border-color:#ffea00!important;
+  background:#ff003c!important;
+  animation:urgentDotPing .55s infinite!important;
+}
 .custom.is-approaching .badge,
-.custom.eva-card-lock .badge{background:#d60022!important;animation:warningText .55s steps(2,end) infinite}
+.custom.eva-card-lock .badge{
+  background:#d60022!important;
+  animation:warningText .55s steps(2,end) infinite;
+}
 
 @keyframes dispatchBorder{0%{background-position:0% 0%}100%{background-position:100% 100%}}
 @keyframes dispatchGlow{0%{box-shadow:0 0 10px #ff003c,0 0 20px #ffb700,inset 0 0 8px #ffe4e6}100%{box-shadow:0 0 26px #ff003c,0 0 45px #ff0000,0 0 60px #ffea00,inset 0 0 16px #ffccd5}}
 @keyframes headAlert{50%{filter:brightness(1.25) saturate(1.4)}}
 @keyframes urgentDotPing{0%{box-shadow:0 0 0 0 #ff003ccc;transform:scale(1.1)}70%{box-shadow:0 0 0 18px rgba(255,0,60,0);transform:scale(1.4)}100%{box-shadow:0 0 0 0 rgba(255,0,60,0);transform:scale(1.1)}}
-@keyframes flow{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-@keyframes pulse{to{box-shadow:0 6px 25px #e3183680,0 0 12px #ff336680}}
-@keyframes shine{50%{background-position:100% 50%}}
-@keyframes ping{70%{box-shadow:0 0 0 11px #e3183600;transform:scale(1.25)}}
 
 .stop-head{padding:12px 16px;font-weight:700;display:flex;justify-content:space-between;cursor:pointer;border-radius:9px}
 .detail{display:none;padding:12px;background:#f8fafc;border-top:1px solid #e2e8f0;border-radius:0 0 9px 9px}
 .stop.expanded .detail{display:block}
 .eta{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:10px}
-.eta.target{border:1.5px solid transparent;background:linear-gradient(#fff,#fff) padding-box,linear-gradient(135deg,#e31836,#ff758c,#e31836) border-box;background-size:200% 200%;animation:flow 3s ease infinite}
+
+/* 一般點選車站的 ETA 框：靜態紅框，不閃爍 */
+.eta.target{
+  border:1.5px solid var(--red);
+  background:#fff;
+}
 .eta-title{display:flex;justify-content:space-between;gap:8px;color:#777;font-size:.85rem;font-weight:700;margin-bottom:6px}
 .badge{background:#374151;color:#fff;padding:7px 10px;border-radius:8px;font-size:.9rem;line-height:1.15;text-align:center;white-space:nowrap}
 .etas{display:flex;gap:8px;justify-content:space-between}
@@ -100,7 +127,7 @@ header.eva-header{background:#050505!important}
 .love-card{background:linear-gradient(135deg,#fff5f7,#fff);border:2px solid #fecdd3;border-radius:16px;padding:24px 20px;box-shadow:0 10px 25px -5px #f43f9726}
 .love-days-highlight{color:#e11d48;font-weight:900}
 
-/* 到站時間格：高動感警示 */
+/* 到站時間格：高動感警示（僅接近時） */
 .arrival-alert{position:relative;overflow:hidden;background:linear-gradient(120deg,#530008,#de001f,#ff541a,#bd001d)!important;background-size:300% 300%!important;border:2px solid #ffcb3d!important;color:#fff!important;animation:arrivalFlash .65s steps(2,end) infinite,arrivalFlow 1.4s linear infinite!important;box-shadow:0 0 6px #ffce38,0 0 17px #ff003c,0 0 29px #ff003c!important}
 .arrival-alert:after{content:"";position:absolute;inset:-70% -30%;background:linear-gradient(115deg,transparent 43%,#fff9 50%,transparent 57%);animation:scan .8s linear infinite}
 .arrival-alert .time,.arrival-alert .wait{position:relative;z-index:1;color:#fff!important;text-shadow:0 1px 3px #400!important}
@@ -266,7 +293,7 @@ header.eva-header{background:#050505!important}
         </div>
       </div>
 
-      <!-- 5 個 12 分鐘時段列表 (無 [ ] 符號，乾淨呈現) -->
+      <!-- 5 個 12 分鐘時段列表 -->
       <div class="space-y-1.5">
         <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 px-1">
           <span>時段範圍</span>
@@ -604,7 +631,6 @@ function render1HourSchedule(baseDate, rainValues) {
     const startTime = new Date(baseDate.getTime() + startMin * 60000);
     const endTime = new Date(baseDate.getTime() + endMin * 60000);
 
-    /* 格式：下午HH:MM - 下午HH:MM (已清除 [ 與 ]) */
     const formattedInterval = `${format12h(startTime)} - ${format12h(endTime)}`;
     const rain = rainValues[i] !== undefined ? rainValues[i] : 0;
     const prob = calculateProbability(rain);

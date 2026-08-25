@@ -604,7 +604,7 @@ function render1HourSchedule(baseDate, rainValues) {
     const startTime = new Date(baseDate.getTime() + startMin * 60000);
     const endTime = new Date(baseDate.getTime() + endMin * 60000);
 
-    /* 格式：下午HH:MM - 下午HH:MM (已刪除 [ 與 ]) */
+    /* 格式：下午HH:MM - 下午HH:MM (已清除 [ 與 ]) */
     const formattedInterval = `${format12h(startTime)} - ${format12h(endTime)}`;
     const rain = rainValues[i] !== undefined ? rainValues[i] : 0;
     const prob = calculateProbability(rain);

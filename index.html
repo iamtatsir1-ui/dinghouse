@@ -234,12 +234,12 @@ header.eva-header{background:#050505!important}
       </div>
     </div>
 
-    <!-- 未來 1 小時降雨臨近預報 -->
+    <!-- 未來降雨臨近預報（已修正為正確半小時網格資料） -->
     <div class="nowcast-card space-y-3">
       <!-- 標題、經緯度與更新按鈕 -->
       <div class="flex items-center justify-between pb-2 border-b border-blue-200">
         <div class="flex items-center gap-2">
-          <span class="text-sm font-bold text-slate-800">🌧️ 未來 1 小時降雨預測</span>
+          <span class="text-sm font-bold text-slate-800">🌧️ 未來降雨臨近預報</span>
           <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-blue-100 text-blue-800 border border-blue-200">
             <i class="ti ti-map-pin text-xs"></i> <span id="locDisplayLabel">22.4578, 114.1683</span>
           </span>
@@ -276,14 +276,14 @@ header.eva-header{background:#050505!important}
         </div>
       </div>
 
-      <!-- 1小時內綜合建議卡片 -->
+      <!-- 綜合建議卡片 -->
       <div id="summaryCard" class="p-2.5 rounded-xl bg-white border border-blue-100 shadow-sm flex items-center justify-between">
         <div class="flex items-center gap-2.5 min-w-0">
           <div id="summaryIconBox" class="w-9 h-9 rounded-lg flex items-center justify-center bg-blue-100 text-blue-600 text-lg shrink-0">
             <i id="summaryIcon" class="ti ti-umbrella"></i>
           </div>
           <div class="min-w-0">
-            <div class="text-[11px] text-slate-500 font-medium">1 小時內綜合建議</div>
+            <div class="text-[11px] text-slate-500 font-medium">未來時段綜合建議</div>
             <div id="summaryText" class="text-xs font-bold text-slate-800 mt-0.5 truncate">正在分析雷達雨量數據...</div>
           </div>
         </div>
@@ -293,10 +293,10 @@ header.eva-header{background:#050505!important}
         </div>
       </div>
 
-      <!-- 5 個 12 分鐘時段列表 -->
+      <!-- 半小時時段列表 -->
       <div class="space-y-1.5">
         <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 px-1">
-          <span>時段範圍</span>
+          <span>時段（半小時累計雨量）</span>
           <span>降雨機率</span>
         </div>
         <div id="intervalList" class="space-y-1.5">
@@ -305,6 +305,9 @@ header.eva-header{background:#050505!important}
             <span>正在同步天文台最新數據...</span>
           </div>
         </div>
+      </div>
+      <div class="text-[10px] text-slate-500 px-1 leading-relaxed">
+        ※ 資料來源：香港天文台網格點降雨臨近預報（每半小時累計）。現在下雨不代表未來時段一定有雨。
       </div>
     </div>
 
@@ -523,7 +526,7 @@ async function updateTaiPoAQHI() {
   } catch(e) {}
 }
 
-/* ================= 未來 1 小時降雨臨近預報 ================= */
+/* ================= 未來降雨臨近預報（已修正） ================= */
 function format12h(date) {
   const hours = date.getHours();
   const minutes = String(date.getMinutes()).padStart(2, '0');
@@ -531,6 +534,17 @@ function format12h(date) {
   let h12 = hours % 12;
   if (h12 === 0) h12 = 12;
   return `${period}${h12}:${minutes}`;
+}
+
+function parseHkoTime(str) {
+  // YYYYMMDDHHMM → Date
+  if (!str || str.length < 12) return null;
+  const y = parseInt(str.substring(0, 4), 10);
+  const m = parseInt(str.substring(4, 6), 10) - 1;
+  const d = parseInt(str.substring(6, 8), 10);
+  const hh = parseInt(str.substring(8, 10), 10);
+  const mm = parseInt(str.substring(10, 12), 10);
+  return new Date(y, m, d, hh, mm);
 }
 
 function calculateProbability(rainMm) {
@@ -571,68 +585,109 @@ async function fetchRainData() {
   const refreshIcon = $('refreshRainIcon');
   if (refreshIcon) refreshIcon.classList.add('animate-spin');
 
-  let baseDate = new Date();
-  let rainValues = [];
+  let intervals = []; // { endDate, rain, startDate? }
 
   try {
     const csvText = await fetchRainCsvWithFallback();
     const lines = csvText.trim().split('\n');
 
-    let grids = [];
+    // 收集所有有效資料列
+    const rows = [];
     for (let i = 1; i < lines.length; i++) {
       const cols = lines[i].split(',');
       if (cols.length >= 5) {
-        const updatedStr = cols[0].trim();
-        if (i === 1 && updatedStr.length === 12) {
-          const y = parseInt(updatedStr.substring(0, 4), 10);
-          const m = parseInt(updatedStr.substring(4, 6), 10) - 1;
-          const d = parseInt(updatedStr.substring(6, 8), 10);
-          const hh = parseInt(updatedStr.substring(8, 10), 10);
-          const mm = parseInt(updatedStr.substring(10, 12), 10);
-          baseDate = new Date(y, m, d, hh, mm);
-        }
-
+        const updateStr = cols[0].trim();
+        const endStr = cols[1].trim();
         const lat = parseFloat(cols[2]);
         const lon = parseFloat(cols[3]);
         const rain = parseFloat(cols[4]) || 0;
-        const distSq = Math.pow(lat - currentTargetLat, 2) + Math.pow(lon - currentTargetLon, 2);
-        grids.push({ lat, lon, rain, distSq });
+        if (isNaN(lat) || isNaN(lon)) continue;
+        rows.push({ updateStr, endStr, lat, lon, rain });
       }
     }
 
-    if (grids.length > 0) {
-      grids.sort((a, b) => a.distSq - b.distSq);
-      activeGridLat = grids[0].lat;
-      activeGridLon = grids[0].lon;
-      rainValues = grids.slice(0, 5).map(g => g.rain);
-      $('matchedGridNote').textContent = `最近網點: ${activeGridLat.toFixed(4)}, ${activeGridLon.toFixed(4)}`;
+    if (rows.length === 0) throw new Error('CSV 無有效資料');
+
+    // 1. 找出距離目標最近的網格（以第一個時段的資料為基準找唯一網格）
+    // 先取所有唯一 (lat,lon)
+    const gridMap = new Map(); // key = "lat,lon"
+    for (const r of rows) {
+      const key = r.lat.toFixed(4) + ',' + r.lon.toFixed(4);
+      if (!gridMap.has(key)) {
+        const distSq = Math.pow(r.lat - currentTargetLat, 2) + Math.pow(r.lon - currentTargetLon, 2);
+        gridMap.set(key, { lat: r.lat, lon: r.lon, distSq });
+      }
     }
+
+    let nearest = null;
+    for (const g of gridMap.values()) {
+      if (!nearest || g.distSq < nearest.distSq) nearest = g;
+    }
+
+    if (!nearest) throw new Error('找不到最近網格');
+
+    activeGridLat = nearest.lat;
+    activeGridLon = nearest.lon;
+    $('matchedGridNote').textContent = `最近網點: ${activeGridLat.toFixed(4)}, ${activeGridLon.toFixed(4)}`;
+
+    // 2. 取出該網格的所有時段，並按結束時間排序
+    const gridKey = nearest.lat.toFixed(4) + ',' + nearest.lon.toFixed(4);
+    const gridRows = rows.filter(r => (r.lat.toFixed(4) + ',' + r.lon.toFixed(4)) === gridKey);
+
+    // 去重並按 endStr 排序
+    const byEnd = new Map();
+    for (const r of gridRows) {
+      byEnd.set(r.endStr, r);
+    }
+    const sortedEnds = Array.from(byEnd.keys()).sort();
+
+    for (const endStr of sortedEnds) {
+      const r = byEnd.get(endStr);
+      const endDate = parseHkoTime(endStr);
+      if (!endDate) continue;
+      // 半小時時段：開始時間 = 結束時間 - 30 分鐘
+      const startDate = new Date(endDate.getTime() - 30 * 60000);
+      intervals.push({
+        startDate,
+        endDate,
+        rain: r.rain,
+        endStr
+      });
+    }
+
   } catch (err) {
-    console.warn('降雨臨近預報數據讀取回退:', err);
+    console.warn('降雨臨近預報數據讀取失敗:', err);
   } finally {
     if (refreshIcon) refreshIcon.classList.remove('animate-spin');
   }
 
-  if (rainValues.length < 5) {
-    rainValues = [0, 0, 0, 0, 0];
+  // 若完全沒資料，顯示空狀態
+  if (intervals.length === 0) {
+    intervals = [];
   }
 
-  render1HourSchedule(baseDate, rainValues);
+  renderRainSchedule(intervals);
 }
 
-function render1HourSchedule(baseDate, rainValues) {
+function renderRainSchedule(intervals) {
   const listContainer = $('intervalList');
   listContainer.innerHTML = '';
   let maxProb = 0;
 
-  for (let i = 0; i < 5; i++) {
-    const startMin = i * 12;
-    const endMin = (i + 1) * 12;
-    const startTime = new Date(baseDate.getTime() + startMin * 60000);
-    const endTime = new Date(baseDate.getTime() + endMin * 60000);
+  if (intervals.length === 0) {
+    listContainer.innerHTML = `
+      <div class="py-4 text-center text-slate-500 text-xs space-y-1 bg-white rounded-xl border border-slate-200">
+        <i class="ti ti-cloud-off text-lg text-slate-400 block mx-auto"></i>
+        <span>暫時無法取得臨近預報數據</span>
+      </div>`;
+    $('summaryMaxProb').innerText = '--%';
+    $('summaryText').innerText = '數據載入失敗，請稍後再試';
+    return;
+  }
 
-    const formattedInterval = `${format12h(startTime)} - ${format12h(endTime)}`;
-    const rain = rainValues[i] !== undefined ? rainValues[i] : 0;
+  intervals.forEach((item, i) => {
+    const formattedInterval = `${format12h(item.startDate)} – ${format12h(item.endDate)}`;
+    const rain = item.rain;
     const prob = calculateProbability(rain);
     if (prob > maxProb) maxProb = prob;
 
@@ -649,7 +704,7 @@ function render1HourSchedule(baseDate, rainValues) {
               ${formattedInterval}
             </div>
             <div class="text-[10px] text-slate-500 flex items-center gap-1 mt-0.5">
-              <i class="ti ${style.icon}"></i> ${style.statusText} ${rain > 0 ? `· 預測約 ${rain.toFixed(1)} mm` : ''}
+              <i class="ti ${style.icon}"></i> ${style.statusText}${rain > 0.02 ? ` · 預測約 ${rain.toFixed(1)} mm` : ''}
             </div>
           </div>
         </div>
@@ -664,7 +719,7 @@ function render1HourSchedule(baseDate, rainValues) {
       </div>
     `;
     listContainer.insertAdjacentHTML('beforeend', itemHtml);
-  }
+  });
 
   $('summaryMaxProb').innerText = `${maxProb}%`;
   const summaryText = $('summaryText');
@@ -672,7 +727,7 @@ function render1HourSchedule(baseDate, rainValues) {
   const summaryBox = $('summaryIconBox');
 
   if (maxProb < 20) {
-    summaryText.innerText = `未來 1 小時無明顯降雨，適宜外出 ☀️`;
+    summaryText.innerText = `未來時段無明顯降雨，適宜外出 ☀️`;
     summaryIcon.className = "ti ti-sun text-emerald-600";
     summaryBox.className = "w-9 h-9 rounded-lg flex items-center justify-center bg-emerald-100 text-lg shrink-0";
   } else if (maxProb < 50) {
@@ -1028,7 +1083,7 @@ home();
 
 /* 自動刷新定時器 */
 setInterval(updateTaiPoWeather, 300000);  // 天氣每 5 分鐘刷新
-setInterval(fetchRainData, 300000);        // 降雨預測每 5 分鐘刷新（「未來 1 小時降雨預測」大框內所有資訊）
+setInterval(fetchRainData, 300000);        // 降雨預測每 5 分鐘刷新
 setInterval(()=>{if(step===2)home()}, 15000); // 快捷到站每 15 秒刷新
 </script>
 </body>

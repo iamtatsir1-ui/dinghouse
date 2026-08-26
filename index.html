@@ -1028,7 +1028,7 @@ home();
 
 /* 自動刷新定時器 */
 setInterval(updateTaiPoWeather, 300000);  // 天氣每 5 分鐘刷新
-setInterval(fetchRainData, 300000);        // 降雨預測每 5 分鐘刷新
+setInterval(fetchRainData, 300000);        // 降雨預測每 5 分鐘刷新（「未來 1 小時降雨預測」大框內所有資訊）
 setInterval(()=>{if(step===2)home()}, 15000); // 快捷到站每 15 秒刷新
 </script>
 </body>
